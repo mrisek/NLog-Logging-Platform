@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,7 +26,7 @@ namespace NLogPOC
 
         // create new netstream
         private static NetworkStream netstream;
-        
+
         // declare enumeration that consists of different NLog levels
         public enum Logs : byte { Trace = 1, Debug, Info, Warn, Error, Fatal };
 
@@ -36,7 +36,7 @@ namespace NLogPOC
 
         #region Logging
 
-        /// <summary>
+        /// <summary>   
         /// Method for writing sample diagnostic messages at six different log levels
         /// Those are Trace, Debug, Info, Warn, Error and Fatal level
         /// </summary>
@@ -100,7 +100,37 @@ namespace NLogPOC
                     logger.Fatal(message);
                     break;
             }
-            
+        }
+
+        /// <summary>
+        /// Method for creating six possible NLog levels with custom text message and parameter
+        /// </summary>
+        /// <param name="logs"></param>
+        /// <param name="message"></param>
+        /// <param name="param"></param>
+        public static void LogMessage(Logs logs, string message, string param)
+        {
+            switch (logs)
+            {
+                case Logs.Trace:
+                    logger.Trace("{0} - {1}", message, param);
+                    break;
+                case Logs.Debug:
+                    logger.Debug("{0} - {1}", message, param);
+                    break;
+                case Logs.Info:
+                    logger.Info("{0} - {1}", message, param);
+                    break;
+                case Logs.Warn:
+                    logger.Warn("{0} - {1}", message, param);
+                    break;
+                case Logs.Error:
+                    logger.Error("{0} - {1}", message, param);
+                    break;
+                case Logs.Fatal:
+                    logger.Fatal("{0} - {1}", message, param);
+                    break;
+            }
         }
 
         #endregion
@@ -177,7 +207,7 @@ namespace NLogPOC
                 // server listening on the contosoServer computer
                 // at port 11000.
                 TcpClient tcpClient = new TcpClient();
-                tcpClient.Connect("contosoServer", 11000);
+                tcpClient.Connect("127.0.0.1", 8080);
                 // Get the stream used to read the message sent by the server.
                 NetworkStream networkStream = tcpClient.GetStream();
                 // Set a 10 millisecond timeout for reading.
@@ -188,9 +218,17 @@ namespace NLogPOC
                 //Convert the server's message into a string and display it.
                 string data = Encoding.UTF8.GetString(bytes);
                 Console.WriteLine("Server sent message: {0}", data);
+
+
+
+
                 networkStream.Close();
                 tcpClient.Close();
 
+            }
+            catch (System.IO.IOException e) 
+            {
+                Console.Write("Socket exception: {0}", e);
             }
             catch (SocketException e)
             {
@@ -323,9 +361,13 @@ namespace NLogPOC
 
                         if (client.Connected)
                         {
-                            Console.WriteLine("Client connected " + client.RemoteEndPoint.ToString());
+                            Console.WriteLine("Client connected - " + client.RemoteEndPoint.ToString());
                             Thread thread = new Thread(new ParameterizedThreadStart(listenClient));
                             thread.Start(client);
+
+                            byte[] toBytes = Encoding.ASCII.GetBytes("Wellcome!");
+                            client.Send(toBytes);
+
                         }
                     }
                 }
@@ -352,6 +394,12 @@ namespace NLogPOC
                     netstream = new NetworkStream(client);
                     StreamWriter streamWriter = new StreamWriter(netstream); // to client
                     StreamReader streamReader = new StreamReader(netstream); // from client
+
+                    byte[] myWriteBuffer = Encoding.ASCII.GetBytes("Are you receiving this message?");
+                    netstream.Write(myWriteBuffer, 0, myWriteBuffer.Length);
+
+                    var a = streamReader.ReadLine();
+                    Console.Write(a);
                 }
                 catch (Exception e)
                 {
@@ -370,16 +418,28 @@ namespace NLogPOC
             Console.WriteLine("Connecting...");
 
             client.Connect("127.0.0.1", 8080);
+            string remoteEndpoint = client.Client.RemoteEndPoint.ToString();
 
-            Console.WriteLine("Connected");
+            Console.WriteLine("Connected {0}", remoteEndpoint);
 
             NetworkStream netstream = client.GetStream();
             StreamWriter streamWriter = new StreamWriter(netstream);
             StreamReader streamReader = new StreamReader(netstream);
 
+            try
+            {
+                Thread.Sleep(5000);               //1000 milliseconds is one second.
+                client.GetStream().Close();
+                client.Close();
+            }
+            catch (Exception e)
+            {
+
+            }
+
             //client.Close();
             if (!client.Connected)
-                Console.WriteLine("Finito");
+                Console.WriteLine("Disconnected {0}", remoteEndpoint);
         }
 
 
@@ -387,15 +447,15 @@ namespace NLogPOC
 
         #endregion
 
-#endregion
+        #endregion
 
         #region Main method
 
         static void Main(string[] args)
         {
             Console.WriteLine("NLog is a free logging platform for .NET\n");
-            WriteLogMessages();
-            WriteParameterizedLogMessagges();
+            //WriteLogMessages();
+            //WriteParameterizedLogMessagges();
 
             //Close();
             //Connect("127.0.0.1", "message");
@@ -403,8 +463,12 @@ namespace NLogPOC
             //TcpListener();
 
             StartServer();
-            StartClient();
+
+            Close();
+
+           // StartClient();
             LogMessage(Logs.Fatal, "fatalna greska");
+            LogMessage(Logs.Info, "neki info message", "intern name");
 
             Console.WriteLine("Press any key to exit...");
             Console.ReadLine();
