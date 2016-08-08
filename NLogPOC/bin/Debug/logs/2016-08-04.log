@@ -1,0 +1,196 @@
+2016-08-04 11:03:29.0101 INFO Sample informational message
+2016-08-04 11:03:29.0101 INFO Sample informational message
+2016-08-04 11:03:29.0272 WARN Sample warning message
+2016-08-04 11:03:29.0272 WARN Sample warning message
+2016-08-04 11:03:29.0272 ERROR Sample error message
+2016-08-04 11:03:29.0272 ERROR Sample error message
+2016-08-04 11:03:29.0272 FATAL Sample fatal errror message
+2016-08-04 11:03:29.0272 FATAL Sample fatal errror message
+2016-08-04 11:03:29.0422 INFO Sample informational message
+2016-08-04 11:03:29.0422 INFO Sample informational message
+2016-08-04 11:03:29.0422 INFO Sample informational message, a=23, b=54
+2016-08-04 11:03:29.0422 INFO Sample informational message, a=23, b=54
+2016-08-04 11:03:29.0422 INFO Sample informational message, a=23, b=54
+2016-08-04 11:03:29.0422 INFO Sample informational message, a=23, b=54
+2016-08-04 11:06:40.2469|INFO|NLogPOC.Program|Sample informational message
+2016-08-04 11:06:40.2469|INFO|NLogPOC.Program|Sample informational message
+2016-08-04 11:06:40.2469|WARN|NLogPOC.Program|Sample warning message
+2016-08-04 11:06:40.2469|WARN|NLogPOC.Program|Sample warning message
+2016-08-04 11:06:40.2649|ERROR|NLogPOC.Program|Sample error message
+2016-08-04 11:06:40.2649|ERROR|NLogPOC.Program|Sample error message
+2016-08-04 11:06:40.2649|FATAL|NLogPOC.Program|Sample fatal errror message
+2016-08-04 11:06:40.2649|FATAL|NLogPOC.Program|Sample fatal errror message
+2016-08-04 11:06:40.2649|INFO|NLogPOC.Program|Sample informational message
+2016-08-04 11:06:40.2649|INFO|NLogPOC.Program|Sample informational message
+2016-08-04 11:06:40.2799|INFO|NLogPOC.Program|Sample informational message, a=23, b=54
+2016-08-04 11:06:40.2799|INFO|NLogPOC.Program|Sample informational message, a=23, b=54
+2016-08-04 11:06:40.2799|INFO|NLogPOC.Program|Sample informational message, a=23, b=54
+2016-08-04 11:06:40.2799|INFO|NLogPOC.Program|Sample informational message, a=23, b=54
+2016-08-04 12:39:26.0896 INFO Sample informational message
+2016-08-04 12:39:26.0896 INFO Sample informational message
+2016-08-04 12:39:26.1286 WARN Sample warning message
+2016-08-04 12:39:26.1286 WARN Sample warning message
+2016-08-04 12:39:26.1286 ERROR Sample error message
+2016-08-04 12:39:26.1286 ERROR Sample error message
+2016-08-04 12:39:26.1407 FATAL Sample fatal errror message
+2016-08-04 12:39:26.1407 FATAL Sample fatal errror message
+2016-08-04 12:39:26.1407 INFO Sample informational message
+2016-08-04 12:39:26.1407 INFO Sample informational message
+2016-08-04 12:39:26.1527 INFO Sample informational message, a=23, b=54
+2016-08-04 12:39:26.1527 INFO Sample informational message, a=23, b=54
+2016-08-04 12:39:26.1527 INFO Sample informational message, a=23, b=54
+2016-08-04 12:39:26.1527 INFO Sample informational message, a=23, b=54
+2016-08-04 12:40:44.2239 INFO Sample informational message
+2016-08-04 12:40:44.2239 INFO Sample informational message
+2016-08-04 12:40:44.2439 WARN Sample warning message
+2016-08-04 12:40:44.2439 WARN Sample warning message
+2016-08-04 12:40:44.2489 ERROR Sample error message
+2016-08-04 12:40:44.2489 ERROR Sample error message
+2016-08-04 12:40:44.2489 FATAL Sample fatal errror message
+2016-08-04 12:40:44.2489 FATAL Sample fatal errror message
+2016-08-04 12:40:44.2489 INFO Sample informational message
+2016-08-04 12:40:44.2489 INFO Sample informational message
+2016-08-04 12:40:44.2699 INFO Sample informational message, a=23, b=54
+2016-08-04 12:40:44.2699 INFO Sample informational message, a=23, b=54
+2016-08-04 12:40:44.2699 INFO Sample informational message, a=23, b=54
+2016-08-04 12:40:44.2699 INFO Sample informational message, a=23, b=54
+2016-08-04 12:41:21.0490 INFO Sample informational message
+2016-08-04 12:41:21.0490 INFO Sample informational message
+2016-08-04 12:41:21.0791 WARN Sample warning message
+2016-08-04 12:41:21.0791 WARN Sample warning message
+2016-08-04 12:41:21.0791 ERROR Sample error message
+2016-08-04 12:41:21.0791 ERROR Sample error message
+2016-08-04 12:41:21.0931 FATAL Sample fatal errror message
+2016-08-04 12:41:21.0931 FATAL Sample fatal errror message
+2016-08-04 12:41:21.0931 INFO Sample informational message
+2016-08-04 12:41:21.0931 INFO Sample informational message
+2016-08-04 12:41:21.1091 INFO Sample informational message, a=23, b=54
+2016-08-04 12:41:21.1091 INFO Sample informational message, a=23, b=54
+2016-08-04 12:41:21.1091 INFO Sample informational message, a=23, b=54
+2016-08-04 12:41:21.1091 INFO Sample informational message, a=23, b=54
+2016-08-04 12:43:00.0489 INFO Sample informational message
+2016-08-04 12:43:00.0489 INFO Sample informational message
+2016-08-04 12:43:00.0729 WARN Sample warning message
+2016-08-04 12:43:00.0729 WARN Sample warning message
+2016-08-04 12:43:00.0799 ERROR Sample error message
+2016-08-04 12:43:00.0799 ERROR Sample error message
+2016-08-04 12:43:00.0799 FATAL Sample fatal errror message
+2016-08-04 12:43:00.0799 FATAL Sample fatal errror message
+2016-08-04 12:43:00.0799 INFO Sample informational message
+2016-08-04 12:43:00.0799 INFO Sample informational message
+2016-08-04 12:43:00.1005 INFO Sample informational message, a=23, b=54
+2016-08-04 12:43:00.1005 INFO Sample informational message, a=23, b=54
+2016-08-04 12:43:00.1005 INFO Sample informational message, a=23, b=54
+2016-08-04 12:43:00.1005 INFO Sample informational message, a=23, b=54
+2016-08-04 12:53:05.6819 INFO Sample informational message
+2016-08-04 12:53:05.6819 INFO Sample informational message
+2016-08-04 12:53:05.6999 WARN Sample warning message
+2016-08-04 12:53:05.6999 WARN Sample warning message
+2016-08-04 12:53:05.7059 ERROR Sample error message
+2016-08-04 12:53:05.7059 ERROR Sample error message
+2016-08-04 12:53:05.7059 FATAL Sample fatal errror message
+2016-08-04 12:53:05.7059 FATAL Sample fatal errror message
+2016-08-04 12:53:05.7190 INFO Sample informational message
+2016-08-04 12:53:05.7190 INFO Sample informational message
+2016-08-04 12:53:05.7190 INFO Sample informational message, a=23, b=54
+2016-08-04 12:53:05.7190 INFO Sample informational message, a=23, b=54
+2016-08-04 12:53:05.7190 INFO Sample informational message, a=23, b=54
+2016-08-04 12:53:05.7190 INFO Sample informational message, a=23, b=54
+2016-08-04 14:04:40.6893 INFO Sample informational message
+2016-08-04 14:04:40.6893 INFO Sample informational message
+2016-08-04 14:04:41.0025 WARN Sample warning message
+2016-08-04 14:04:41.0025 WARN Sample warning message
+2016-08-04 14:04:41.0025 ERROR Sample error message
+2016-08-04 14:04:41.0025 ERROR Sample error message
+2016-08-04 14:04:41.0146 FATAL Sample fatal errror message
+2016-08-04 14:04:41.0146 FATAL Sample fatal errror message
+2016-08-04 14:04:41.0146 INFO Sample informational message
+2016-08-04 14:04:41.0146 INFO Sample informational message
+2016-08-04 14:04:41.0146 INFO Sample informational message, a=23, b=54
+2016-08-04 14:04:41.0146 INFO Sample informational message, a=23, b=54
+2016-08-04 14:04:41.0346 INFO Sample informational message, a=23, b=54
+2016-08-04 14:04:41.0346 INFO Sample informational message, a=23, b=54
+2016-08-04 14:11:41.9998 INFO Sample informational message
+2016-08-04 14:11:41.9998 INFO Sample informational message
+2016-08-04 14:11:42.0149 WARN Sample warning message
+2016-08-04 14:11:42.0149 WARN Sample warning message
+2016-08-04 14:11:42.0149 ERROR Sample error message
+2016-08-04 14:11:42.0149 ERROR Sample error message
+2016-08-04 14:11:42.0279 FATAL Sample fatal errror message
+2016-08-04 14:11:42.0279 FATAL Sample fatal errror message
+2016-08-04 14:11:42.0279 INFO Sample informational message
+2016-08-04 14:11:42.0279 INFO Sample informational message
+2016-08-04 14:11:42.0439 INFO Sample informational message, a=23, b=54
+2016-08-04 14:11:42.0439 INFO Sample informational message, a=23, b=54
+2016-08-04 14:11:42.0439 INFO Sample informational message, a=23, b=54
+2016-08-04 14:11:42.0439 INFO Sample informational message, a=23, b=54
+2016-08-04 14:12:28.4769 INFO Sample informational message
+2016-08-04 14:12:28.4769 INFO Sample informational message
+2016-08-04 14:12:28.4959 WARN Sample warning message
+2016-08-04 14:12:28.4959 WARN Sample warning message
+2016-08-04 14:12:28.4959 ERROR Sample error message
+2016-08-04 14:12:28.4959 ERROR Sample error message
+2016-08-04 14:12:28.5119 FATAL Sample fatal errror message
+2016-08-04 14:12:28.5119 FATAL Sample fatal errror message
+2016-08-04 14:12:28.5119 INFO Sample informational message
+2016-08-04 14:12:28.5119 INFO Sample informational message
+2016-08-04 14:12:28.5274 INFO Sample informational message, a=23, b=54
+2016-08-04 14:12:28.5274 INFO Sample informational message, a=23, b=54
+2016-08-04 14:12:28.5274 INFO Sample informational message, a=23, b=54
+2016-08-04 14:12:28.5274 INFO Sample informational message, a=23, b=54
+2016-08-04 14:35:07.2659 INFO Sample informational message
+2016-08-04 14:35:07.2659 INFO Sample informational message
+2016-08-04 14:35:07.4206 WARN Sample warning message
+2016-08-04 14:35:07.4206 WARN Sample warning message
+2016-08-04 14:35:07.4276 ERROR Sample error message
+2016-08-04 14:35:07.4276 ERROR Sample error message
+2016-08-04 14:35:07.4276 FATAL Sample fatal errror message
+2016-08-04 14:35:07.4276 FATAL Sample fatal errror message
+2016-08-04 14:35:07.4276 INFO Sample informational message
+2016-08-04 14:35:07.4276 INFO Sample informational message
+2016-08-04 14:35:07.4476 INFO Sample informational message, a=23, b=54
+2016-08-04 14:35:07.4476 INFO Sample informational message, a=23, b=54
+2016-08-04 14:35:07.4476 INFO Sample informational message, a=23, b=54
+2016-08-04 14:35:07.4476 INFO Sample informational message, a=23, b=54
+2016-08-04 14:36:47.7615 INFO Sample informational message
+2016-08-04 14:36:47.7615 INFO Sample informational message
+2016-08-04 14:36:47.7765 WARN Sample warning message
+2016-08-04 14:36:47.7765 WARN Sample warning message
+2016-08-04 14:36:47.7765 ERROR Sample error message
+2016-08-04 14:36:47.7765 ERROR Sample error message
+2016-08-04 14:36:47.7882 FATAL Sample fatal errror message
+2016-08-04 14:36:47.7882 FATAL Sample fatal errror message
+2016-08-04 14:36:47.7882 INFO Sample informational message
+2016-08-04 14:36:47.7882 INFO Sample informational message
+2016-08-04 14:36:47.8042 INFO Sample informational message, a=23, b=54
+2016-08-04 14:36:47.8042 INFO Sample informational message, a=23, b=54
+2016-08-04 14:36:47.8042 INFO Sample informational message, a=23, b=54
+2016-08-04 14:36:47.8042 INFO Sample informational message, a=23, b=54
+2016-08-04 15:26:59.1872 INFO Sample informational message
+2016-08-04 15:26:59.1872 INFO Sample informational message
+2016-08-04 15:26:59.2203 WARN Sample warning message
+2016-08-04 15:26:59.2203 WARN Sample warning message
+2016-08-04 15:26:59.2293 ERROR Sample error message
+2016-08-04 15:26:59.2293 ERROR Sample error message
+2016-08-04 15:26:59.2293 FATAL Sample fatal errror message
+2016-08-04 15:26:59.2293 FATAL Sample fatal errror message
+2016-08-04 15:26:59.2423 INFO Sample informational message
+2016-08-04 15:26:59.2423 INFO Sample informational message
+2016-08-04 15:26:59.2423 INFO Sample informational message, a=23, b=54
+2016-08-04 15:26:59.2423 INFO Sample informational message, a=23, b=54
+2016-08-04 15:26:59.2593 INFO Sample informational message, a=23, b=54
+2016-08-04 15:26:59.2593 INFO Sample informational message, a=23, b=54
+2016-08-04 15:39:34.2557 INFO Sample informational message
+2016-08-04 15:39:34.2557 INFO Sample informational message
+2016-08-04 15:39:34.4223 WARN Sample warning message
+2016-08-04 15:39:34.4223 WARN Sample warning message
+2016-08-04 15:39:34.4283 ERROR Sample error message
+2016-08-04 15:39:34.4283 ERROR Sample error message
+2016-08-04 15:39:34.4283 FATAL Sample fatal errror message
+2016-08-04 15:39:34.4283 FATAL Sample fatal errror message
+2016-08-04 15:39:34.4423 INFO Sample informational message
+2016-08-04 15:39:34.4423 INFO Sample informational message
+2016-08-04 15:39:34.4423 INFO Sample informational message, a=23, b=54
+2016-08-04 15:39:34.4423 INFO Sample informational message, a=23, b=54
+2016-08-04 15:39:34.4583 INFO Sample informational message, a=23, b=54
+2016-08-04 15:39:34.4583 INFO Sample informational message, a=23, b=54

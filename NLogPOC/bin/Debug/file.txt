@@ -1,0 +1,43 @@
+2016-08-04 10:28:03.0087|INFO|NLogPOC.Program|Sample informational message
+2016-08-04 10:28:03.0237|WARN|NLogPOC.Program|Sample warning message
+2016-08-04 10:28:03.0237|ERROR|NLogPOC.Program|Sample error message
+2016-08-04 10:28:03.0297|FATAL|NLogPOC.Program|Sample fatal errror message
+2016-08-04 10:28:03.0297|INFO|NLogPOC.Program|Sample informational message
+2016-08-04 10:34:18.9167|INFO|NLogPOC.Program|Sample informational message
+2016-08-04 10:34:18.9303|WARN|NLogPOC.Program|Sample warning message
+2016-08-04 10:34:18.9303|ERROR|NLogPOC.Program|Sample error message
+2016-08-04 10:34:18.9303|FATAL|NLogPOC.Program|Sample fatal errror message
+2016-08-04 10:34:18.9303|INFO|NLogPOC.Program|Sample informational message
+2016-08-04 10:34:57.4474|INFO|NLogPOC.Program|Sample informational message
+2016-08-04 10:34:57.6280|WARN|NLogPOC.Program|Sample warning message
+2016-08-04 10:34:57.6280|ERROR|NLogPOC.Program|Sample error message
+2016-08-04 10:34:57.6330|FATAL|NLogPOC.Program|Sample fatal errror message
+2016-08-04 10:34:57.6330|INFO|NLogPOC.Program|Sample informational message
+2016-08-04 10:36:46.5396|INFO|NLogPOC.Program|Sample informational message
+2016-08-04 10:36:46.6862|WARN|NLogPOC.Program|Sample warning message
+2016-08-04 10:36:46.6862|ERROR|NLogPOC.Program|Sample error message
+2016-08-04 10:36:46.6862|FATAL|NLogPOC.Program|Sample fatal errror message
+2016-08-04 10:36:46.6862|INFO|NLogPOC.Program|Sample informational message
+2016-08-04 10:36:46.6982|INFO|NLogPOC.Program|Sample informational message, a=23, b=54
+2016-08-04 10:36:46.6982|INFO|NLogPOC.Program|Sample informational message, a=23, b=54
+2016-08-04 10:37:47.8002|INFO|NLogPOC.Program|Sample informational message
+2016-08-04 10:37:47.8132|WARN|NLogPOC.Program|Sample warning message
+2016-08-04 10:37:47.8132|ERROR|NLogPOC.Program|Sample error message
+2016-08-04 10:37:47.8132|FATAL|NLogPOC.Program|Sample fatal errror message
+2016-08-04 10:37:47.8132|INFO|NLogPOC.Program|Sample informational message
+2016-08-04 10:37:47.8263|INFO|NLogPOC.Program|Sample informational message, a=23, b=54
+2016-08-04 10:37:47.8263|INFO|NLogPOC.Program|Sample informational message, a=23, b=54
+2016-08-04 10:41:52.2457|INFO|NLogPOC.Program|Sample informational message
+2016-08-04 10:41:52.2778|WARN|NLogPOC.Program|Sample warning message
+2016-08-04 10:41:52.2778|ERROR|NLogPOC.Program|Sample error message
+2016-08-04 10:41:52.2778|FATAL|NLogPOC.Program|Sample fatal errror message
+2016-08-04 10:41:52.2778|INFO|NLogPOC.Program|Sample informational message
+2016-08-04 10:41:52.2908|INFO|NLogPOC.Program|Sample informational message, a=23, b=54
+2016-08-04 10:41:52.2908|INFO|NLogPOC.Program|Sample informational message, a=23, b=54
+2016-08-04 10:44:12.7468|INFO|NLogPOC.Program|Sample informational message
+2016-08-04 10:44:12.7468|WARN|NLogPOC.Program|Sample warning message
+2016-08-04 10:44:12.7648|ERROR|NLogPOC.Program|Sample error message
+2016-08-04 10:44:12.7648|FATAL|NLogPOC.Program|Sample fatal errror message
+2016-08-04 10:44:12.7648|INFO|NLogPOC.Program|Sample informational message
+2016-08-04 10:44:12.7648|INFO|NLogPOC.Program|Sample informational message, a=23, b=54
+2016-08-04 10:44:12.7789|INFO|NLogPOC.Program|Sample informational message, a=23, b=54
