@@ -36,6 +36,17 @@ namespace NLogPOC
 
         #region Logging
 
+        /*
+            Six types of log levels in NLog:
+
+            1) Trace - very detailed logs, which may include high-volume information such as protocol payloads. This log level is typically only enabled during development
+            2) Debug - debugging information, less detailed than trace, typically not enabled in production environment.
+            3) Info - information messages, which are normally enabled in production environment
+            4) Warn - warning messages, typically for non-critical issues, which can be recovered or which are temporary failures
+            5) Error - error messages - most of the time these are Exceptions
+            6) Fatal - very serious errors!
+        */
+
         /// <summary>   
         /// Method for writing sample diagnostic messages at six different log levels
         /// Those are Trace, Debug, Info, Warn, Error and Fatal level
@@ -47,7 +58,7 @@ namespace NLogPOC
             logger.Info("Sample informational message");
             logger.Warn("Sample warning message");
             logger.Error("Sample error message");
-            logger.Fatal("Sample fatal errror message");
+            logger.Fatal("Sample fatal error message");
 
             // alternatively you can call the Log() method and pass log level as the parameter
             logger.Log(LogLevel.Info, "Sample informational message");
@@ -226,7 +237,7 @@ namespace NLogPOC
                 tcpClient.Close();
 
             }
-            catch (System.IO.IOException e) 
+            catch (System.IO.IOException e)
             {
                 Console.Write("Socket exception: {0}", e);
             }
@@ -340,50 +351,73 @@ namespace NLogPOC
         #endregion
 
         #region TEST SOCKET REGION
-
+        
+        /// <summary>
+        /// Method for creating listeners for incoming connection requests and sending messages to clients
+        /// </summary>
         [STAThread]
         static void StartServer()
         {
             try
             {
+                // Set the title displayed in the console title bar
                 Console.Title = "Server";
 
+                // Set listener for incoming connection requests
                 IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
                 TcpListener tcpListener = new TcpListener(ipAddress, 8080);
                 tcpListener.Start();
+                // Create log messages by using NLog logging platform
+                LogMessage(Logs.Info, "Server is running");
                 Console.WriteLine("\nServer is running");
 
                 try
                 {
                     while (true)
                     {
+                        // accept a pending connection request
                         client = tcpListener.AcceptSocket();
+                        string remoteEndPoint = "";
 
+                        // if socket is connected to a remote host, send server message
                         if (client.Connected)
                         {
-                            Console.WriteLine("Client connected - " + client.RemoteEndPoint.ToString());
+                            // get client remote endpoint
+                            remoteEndPoint = client.RemoteEndPoint.ToString();
+                            LogMessage(Logs.Info, "Client connected", remoteEndPoint);
+                            Console.WriteLine("Client connected - " + remoteEndPoint);
+
+                            // send message to client after connection is established
+                            byte[] toBytes = Encoding.ASCII.GetBytes("Wellcome!");
+                            // send data to a connected Socket
+                            client.Send(toBytes);
+                            LogMessage(Logs.Info, "Server message sent to", remoteEndPoint);
+                            Console.WriteLine("Server message sent to {0}", remoteEndPoint);
+
+                            // continue conversation on a new thread
                             Thread thread = new Thread(new ParameterizedThreadStart(listenClient));
                             thread.Start(client);
-
-                            byte[] toBytes = Encoding.ASCII.GetBytes("Wellcome!");
-                            client.Send(toBytes);
-
                         }
                     }
                 }
                 catch (Exception e)
                 {
+                    LogMessage(Logs.Error, "Server error: ", e.ToString());
                     Console.WriteLine(e.ToString());
                 }
             }
             catch (Exception e)
             {
+                LogMessage(Logs.Debug, "Server is already running");
                 //Console.WriteLine("Server is already running! {0}", e);
             }
         }
 
 
-
+        /// <summary>
+        /// Method for communicating with the client by writing data to the Network Stream on a new thread
+        /// </summary>
+        /// <param name="data"></param>
         static void listenClient(object data)
         {
             while (client.Connected)
@@ -392,58 +426,115 @@ namespace NLogPOC
                 {
                     client = (Socket)data;
                     netstream = new NetworkStream(client);
-                    StreamWriter streamWriter = new StreamWriter(netstream); // to client
-                    StreamReader streamReader = new StreamReader(netstream); // from client
 
-                    byte[] myWriteBuffer = Encoding.ASCII.GetBytes("Are you receiving this message?");
-                    netstream.Write(myWriteBuffer, 0, myWriteBuffer.Length);
+                    // create stream for writing characters in a particular encoding
+                    StreamWriter streamWriter = new StreamWriter(netstream);
+                    byte[] buffer = Encoding.ASCII.GetBytes(" Are you receiving this message?");
+                    // send message to client by writing data to the NetworkStream
+                    netstream.Write(buffer, 0, buffer.Length);
 
-                    var a = streamReader.ReadLine();
-                    Console.Write(a);
+                    // read the client message into a byte buffer
+                    buffer = new byte[1024];
+                    netstream.Read(buffer, 0, 1024);
+                    // convert the client message into a string and display it
+                    string readData = Encoding.UTF8.GetString(buffer);
+                    Console.WriteLine("Client {0} sent message: {1}", client.RemoteEndPoint, readData);
+                }
+                catch (IOException e)
+                {
+                    LogMessage(Logs.Error, "IOException: ", e.ToString());
+                    Console.WriteLine("An existing connection was forcibly closed", e.ToString());
                 }
                 catch (Exception e)
                 {
-
+                    LogMessage(Logs.Error, "Unable to communicate with the client on a new thread", e.ToString());
+                    Console.WriteLine("Unable to communicate with the client on a new thread", e.ToString());
                 }
             }
         }
 
-
+        /// <summary>
+        /// Method for instanting a client connections, sending messages to server, reading messages from server and closing TCP connection
+        /// </summary>
         [STAThread]
         static void StartClient()
         {
+            // set the title to display in the console title bar
             Console.Title = "Client";
-
-            TcpClient client = new TcpClient();
+            string remoteEndpoint = "";
+            TcpClient tcpClient = new TcpClient();
             Console.WriteLine("Connecting...");
-
-            client.Connect("127.0.0.1", 8080);
-            string remoteEndpoint = client.Client.RemoteEndPoint.ToString();
-
-            Console.WriteLine("Connected {0}", remoteEndpoint);
-
-            NetworkStream netstream = client.GetStream();
-            StreamWriter streamWriter = new StreamWriter(netstream);
-            StreamReader streamReader = new StreamReader(netstream);
 
             try
             {
-                Thread.Sleep(5000);               //1000 milliseconds is one second.
-                client.GetStream().Close();
-                client.Close();
+                // connect the client to the specified port on the specifed host
+                tcpClient.Connect("127.0.0.1", 8080);
+                // get socket remote endpoint
+                remoteEndpoint = tcpClient.Client.RemoteEndPoint.ToString();
+                Console.WriteLine("Connected - {0}", remoteEndpoint);
+                LogMessage(Logs.Info, "Connected ", remoteEndpoint);
             }
             catch (Exception e)
             {
-
+                Console.WriteLine("Unable to connect the client", e.ToString());
+                LogMessage(Logs.Error, "Unable to connect the client", e.ToString());
             }
 
-            //client.Close();
-            if (!client.Connected)
+            try
+            {
+                // Get the stream used to read the message sent by the server.
+                NetworkStream networkStream = tcpClient.GetStream();
+                // Read the server message into a byte buffer.
+                byte[] bytes = new byte[1024];
+                networkStream.Read(bytes, 0, 1024);
+                //Convert the server's message into a string and display it.
+                string data = Encoding.UTF8.GetString(bytes);
+                Console.WriteLine("Server sent message: {0}", data);
+
+                if (data.Length != 0)
+                {
+                    // encode all the characters in the specifedstring into a sequence of bytes
+                    byte[] myWriteBuffer = Encoding.ASCII.GetBytes("\nI got your message, thank you!");
+                    // write data to Network Stream in order to send return message to server
+                    networkStream.Write(myWriteBuffer, 0, myWriteBuffer.Length);
+                    LogMessage(Logs.Info, "Response was sent by client", remoteEndpoint);
+                    Console.WriteLine("Response was sent by client {0}", remoteEndpoint);
+                }
+            }
+            catch (IOException e)
+            {
+                Console.WriteLine("Unable to read server message {0}", e.ToString());
+                LogMessage(Logs.Error, "Unable to read server message", e.ToString());
+            }
+
+            try
+            {
+                // wait for 5 seconds and then disconnect, 1000 milliseconds is one second.
+                Thread.Sleep(5000);
+                // close the current stream and release any resources associated with the current stream
+                tcpClient.GetStream().Close();
+                // dispose client instance and request closing of underlying TCP connection
+                tcpClient.Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Unable to close client", remoteEndpoint);
+                LogMessage(Logs.Error, "Unable to close client.", e.ToString());
+            }
+
+            // check if client is disconnected
+            if (!tcpClient.Connected)
+            {
                 Console.WriteLine("Disconnected {0}", remoteEndpoint);
+                LogMessage(Logs.Info, "Client disconnected", remoteEndpoint);
+            }
+            else
+            {
+                Console.WriteLine("The underlying TCP connection was not closed by client {0}", remoteEndpoint);
+                LogMessage(Logs.Warn, "The underlying TCP connection was not closed by client {0}", remoteEndpoint);
+            }
+                
         }
-
-
-
 
         #endregion
 
@@ -454,21 +545,20 @@ namespace NLogPOC
         static void Main(string[] args)
         {
             Console.WriteLine("NLog is a free logging platform for .NET\n");
+
+            // example of possible log levels
             //WriteLogMessages();
             //WriteParameterizedLogMessagges();
 
-            //Close();
             //Connect("127.0.0.1", "message");
-            //ConnectClient();
+            
             //TcpListener();
 
+            //ConnectClient();
+            //Close();
+
             StartServer();
-
-            Close();
-
-           // StartClient();
-            LogMessage(Logs.Fatal, "fatalna greska");
-            LogMessage(Logs.Info, "neki info message", "intern name");
+            StartClient();
 
             Console.WriteLine("Press any key to exit...");
             Console.ReadLine();
