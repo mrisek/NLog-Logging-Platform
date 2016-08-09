@@ -1,2 +1,2 @@
 # NLog-Logging-Platform
-NLog is a free logging platform for .NET
+A program written in C# for creating log files using NLog, a free logging platform for .NET
