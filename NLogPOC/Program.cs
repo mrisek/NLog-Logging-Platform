@@ -8,10 +8,11 @@ using NLog;
 using System.Net;
 using System.Threading;
 using System.IO;
+using System.Runtime.Serialization.Formatters.Soap;
 
 namespace NLogPOC
 {
-    public sealed class Program : IDisposable
+    internal sealed class Program : IDisposable
     {
         #region Member variables
 
@@ -29,6 +30,14 @@ namespace NLogPOC
 
         // declare enumeration that consists of different NLog levels
         public enum Logs : byte { Trace = 1, Debug, Info, Warn, Error, Fatal };
+
+        // stores list of serializable test objects
+        private Dictionary<int, TestSimpleObject> m_listConversations = new Dictionary<int, TestSimpleObject>();
+
+        // lock
+        private static readonly Object obj = new Object();
+
+
 
         #endregion
 
@@ -351,7 +360,7 @@ namespace NLogPOC
         #endregion
 
         #region TEST SOCKET REGION
-        
+
         /// <summary>
         /// Method for creating listeners for incoming connection requests and sending messages to clients
         /// </summary>
@@ -412,7 +421,6 @@ namespace NLogPOC
                 //Console.WriteLine("Server is already running! {0}", e);
             }
         }
-
 
         /// <summary>
         /// Method for communicating with the client by writing data to the Network Stream on a new thread
@@ -494,11 +502,18 @@ namespace NLogPOC
                 if (data.Length != 0)
                 {
                     // encode all the characters in the specifedstring into a sequence of bytes
-                    byte[] myWriteBuffer = Encoding.ASCII.GetBytes("\nI got your message, thank you!");
+                    byte[] buffer = Encoding.ASCII.GetBytes("\nI got your message, thank you!");
                     // write data to Network Stream in order to send return message to server
-                    networkStream.Write(myWriteBuffer, 0, myWriteBuffer.Length);
+                    networkStream.Write(buffer, 0, buffer.Length);
                     LogMessage(Logs.Info, "Response was sent by client", remoteEndpoint);
                     Console.WriteLine("Response was sent by client {0}", remoteEndpoint);
+
+
+                    using (var stream = tcpClient.GetStream())
+                    {
+                        // tu dolazi kolekcija
+                        stream.Write(buffer, 0, buffer.Length);
+                    }
                 }
             }
             catch (IOException e)
@@ -533,7 +548,7 @@ namespace NLogPOC
                 Console.WriteLine("The underlying TCP connection was not closed by client {0}", remoteEndpoint);
                 LogMessage(Logs.Warn, "The underlying TCP connection was not closed by client {0}", remoteEndpoint);
             }
-                
+
         }
 
         #endregion
@@ -551,14 +566,31 @@ namespace NLogPOC
             //WriteParameterizedLogMessagges();
 
             //Connect("127.0.0.1", "message");
-            
+
             //TcpListener();
 
             //ConnectClient();
             //Close();
 
-            StartServer();
-            StartClient();
+            Thread t1 = new Thread(StartServer);
+            t1.Start();
+
+            // Testing of lock
+            lock (obj)
+            {
+                Thread t2 = new Thread(StartClient);
+                t2.Start();
+            }
+
+            // Testing of delays
+            Task.Run(async () => {
+                Thread t3 = new Thread(StartClient);
+                await Task.Delay(8000);
+                t3.Start();
+            });
+
+            //StartServer();
+            //StartClient();
 
             Console.WriteLine("Press any key to exit...");
             Console.ReadLine();
@@ -575,5 +607,107 @@ namespace NLogPOC
 
         #endregion
 
+        #region Collection serialization
+
+        // A test object that needs to be serialized.
+        [Serializable()]
+        public class TestSimpleObject
+        {
+            public int member1;
+            public string member2;
+            public string member3;
+            public double member4;
+
+            // A field that is not serialized.
+            [NonSerialized()]
+            public string member5;
+
+            public TestSimpleObject()
+            {
+                member1 = 11;
+                member2 = "hello";
+                member3 = "hello";
+                member4 = 3.14159265;
+                member5 = "hello world!";
+            }
+
+            public void Print()
+            {
+                Console.WriteLine("member1 = '{0}'", member1);
+                Console.WriteLine("member2 = '{0}'", member2);
+                Console.WriteLine("member3 = '{0}'", member3);
+                Console.WriteLine("member4 = '{0}'", member4);
+                Console.WriteLine("member5 = '{0}'", member5);
+            }
+        }
+
+
+        static Stream CreateSerializedCollection()
+        {
+            //Creates a new TestSimpleObject object.
+            TestSimpleObject obj = new TestSimpleObject();
+
+            Console.WriteLine("Before serialization the object contains: ");
+            obj.Print();
+
+            //Opens a file and serializes the object into it in binary format.
+            Stream stream = File.Open("data.xml", FileMode.Create);
+            SoapFormatter formatter = new SoapFormatter();
+
+            //BinaryFormatter formatter = new BinaryFormatter();
+
+            formatter.Serialize(stream, obj);
+            stream.Close();
+
+            return stream;
+        }
+
+        static void DeserializeCollection(Stream stream)
+        {
+            TestSimpleObject obj = new TestSimpleObject();
+            //Empties obj.
+            obj = null;
+
+            //Opens file "data.xml" and deserializes the object from it.
+            stream = File.Open("data.xml", FileMode.Open);
+
+            SoapFormatter formatter = new SoapFormatter();
+            formatter = new SoapFormatter();
+
+            //formatter = new BinaryFormatter();
+
+            obj = (TestSimpleObject)formatter.Deserialize(stream);
+            stream.Close();
+
+            Console.WriteLine("");
+            Console.WriteLine("After deserialization the object contains: ");
+            obj.Print();
+        }
+
+
+        public static byte[] ReadFully(Stream input)
+        {
+            byte[] buffer = new byte[16 * 1024];
+            using (MemoryStream ms = new MemoryStream())
+            {
+                int read;
+                try
+                {
+                    while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
+                    {
+                        ms.Write(buffer, 0, read);
+                    }
+                }
+                catch (ObjectDisposedException e)
+                {
+
+                }
+
+                return ms.ToArray();
+            }
+        }
+
+
+        #endregion
     }
 }
