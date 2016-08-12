@@ -1,18 +1,20 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System; // fundamental classes and commonly-used base classes 
+using System.Collections.Generic; // provides strongly typed collections
+using System.Linq; // provides patterns for querying and updating data
+using System.Text; // string formating, converting characters from/to bytes
+using System.Threading.Tasks; // provides types for asynchronous operations
 using System.Net.Sockets; // provides client connections for TCP network services
-using NLog;
-using System.Net;
-using System.Threading;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Soap;
+using NLog; // provides logging platform with rich log routing and management capabilities
+using System.Net; // simple programming interface for network protocols
+using System.Threading; // creates and controls a thread, sets priority and gets its status
+using System.IO; // reading and writing to files and data streams, basic file support
+using System.Runtime.Serialization.Formatters.Soap; // (de)serializing objects in the SOAP format
+using System.Xml.Linq; // in-memory XML programming interface for modifying XML documents
+using System.Xml.Serialization; // serialization of  objects into XML format documents or streams
 
 namespace NLogPOC
 {
-    internal sealed class Program : IDisposable
+    public sealed class Program : IDisposable
     {
         #region Member variables
 
@@ -40,8 +42,6 @@ namespace NLogPOC
 
 
         #endregion
-
-        #region Public methods
 
         #region Logging
 
@@ -447,6 +447,20 @@ namespace NLogPOC
                     // convert the client message into a string and display it
                     string readData = Encoding.UTF8.GetString(buffer);
                     Console.WriteLine("Client {0} sent message: {1}", client.RemoteEndPoint, readData);
+
+                    // for deserializing XML documents into objects of the specified type
+                    XmlSerializer serializer = new XmlSerializer(typeof(StepList));
+                    // create new file, (over)write the specified string to the file and then close the file, 
+                    File.WriteAllText("simple.xml", readData);
+
+                    // deserialization from created xml file
+                    using (FileStream fileStream = new FileStream("simple.xml", FileMode.Open))
+                    {
+                        // deserialize the XML document contained by the specified Stream
+                        StepList result = (StepList)serializer.Deserialize(fileStream);
+                        result.Print();
+                        Console.WriteLine("\n");
+                    }
                 }
                 catch (IOException e)
                 {
@@ -499,21 +513,50 @@ namespace NLogPOC
                 string data = Encoding.UTF8.GetString(bytes);
                 Console.WriteLine("Server sent message: {0}", data);
 
+                // send response to server
                 if (data.Length != 0)
                 {
-                    // encode all the characters in the specifedstring into a sequence of bytes
-                    byte[] buffer = Encoding.ASCII.GetBytes("\nI got your message, thank you!");
-                    // write data to Network Stream in order to send return message to server
-                    networkStream.Write(buffer, 0, buffer.Length);
+                    //// encode all the characters in the specifedstring into a sequence of bytes
+                    //byte[] buffer = Encoding.ASCII.GetBytes("\nI got your message, thank you!");
+                    //// write data to Network Stream in order to send return message to server
+                    //networkStream.Write(buffer, 0, buffer.Length);
+
                     LogMessage(Logs.Info, "Response was sent by client", remoteEndpoint);
                     Console.WriteLine("Response was sent by client {0}", remoteEndpoint);
 
+                    // test instances that will be sent through Socket
+                    CollectionTestObject e1 = new CollectionTestObject(1, "one");
+                    CollectionTestObject e2 = new CollectionTestObject(2, "two");
+                    CollectionTestObject e3 = new CollectionTestObject(3, "three");
+                    CollectionTestObject e4 = new CollectionTestObject(4, "four");
 
-                    using (var stream = tcpClient.GetStream())
-                    {
-                        // tu dolazi kolekcija
-                        stream.Write(buffer, 0, buffer.Length);
-                    }
+                    // collection of test objects for serialization
+                    List<CollectionTestObject> entries = new List<CollectionTestObject>();
+                    entries.Add(e1);
+                    entries.Add(e2);
+                    entries.Add(e3);
+                    entries.Add(e4);
+                    entries.Add(e1);
+                    entries.Add(e2);
+                    entries.Add(e3);
+                    entries.Add(e4);
+
+                    // LINQ to XML for creating XML tree
+                    XDocument xdoc = new XDocument(
+                        new XElement("StepList",
+                        entries.Select(i => new XElement("Step",
+                        new XElement("Name", (i.Value)),
+                        new XElement("Desc", (i.Key))))));
+
+                    //Console.Write("\n\n" + xdoc);
+
+                    // encode all the characters in the specifedstring into a sequence of bytes
+                    byte[] buffer = Encoding.ASCII.GetBytes(xdoc.ToString());
+                    // write data to Network Stream in order to send return message to server
+                    networkStream.Write(buffer, 0, buffer.Length);
+
+                    LogMessage(Logs.Info, "Collection was sent by client", remoteEndpoint);
+                    Console.WriteLine("Collection was sent by client {0}", remoteEndpoint);
                 }
             }
             catch (IOException e)
@@ -550,8 +593,6 @@ namespace NLogPOC
             }
 
         }
-
-        #endregion
 
         #endregion
 
@@ -707,6 +748,59 @@ namespace NLogPOC
             }
         }
 
+
+        #endregion
+
+        #region XML deserialization
+
+        public class CollectionTestObject
+        {
+            public object Key;
+            public object Value;
+
+            public CollectionTestObject()
+            {
+            }
+
+            public CollectionTestObject(object key, object value)
+            {
+                Key = key;
+                Value = value;
+            }
+        }
+
+        [XmlRoot("StepList")]
+        public class StepList
+        {
+            [XmlElement("Step")]
+            public List<Step> Steps { get; set; }
+
+            /// <summary>
+            /// Method for printing out all objects from collection
+            /// </summary>
+            public void Print()
+            {
+                int count = 1;
+                Steps.ForEach(
+                    item => Console.Write(
+                        count++ + 
+                        ". Value: " + 
+                        item.Name + 
+                        ", Key: " + 
+                        item.Desc + 
+                        "\n"
+                    )
+                );
+            }
+        }
+
+        public class Step
+        {
+            [XmlElement("Name")]
+            public string Name { get; set; }
+            [XmlElement("Desc")]
+            public string Desc { get; set; }
+        }
 
         #endregion
     }
