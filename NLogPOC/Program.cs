@@ -11,6 +11,7 @@ using System.IO; // reading and writing to files and data streams, basic file su
 using System.Runtime.Serialization.Formatters.Soap; // (de)serializing objects in the SOAP format
 using System.Xml.Linq; // in-memory XML programming interface for modifying XML documents
 using System.Xml.Serialization; // serialization of  objects into XML format documents or streams
+using System.Configuration; // get the AppSettings data for the current app's default configuration
 
 namespace NLogPOC
 {
@@ -38,8 +39,6 @@ namespace NLogPOC
 
         // lock
         private static readonly Object obj = new Object();
-
-
 
         #endregion
 
@@ -95,8 +94,8 @@ namespace NLogPOC
         /// <summary>
         /// Method for creating six possible NLog levels with custom text message
         /// </summary>
-        /// <param name="logs"></param>
-        /// <param name="message"></param>
+        /// <param name="logs">log level</param>
+        /// <param name="message">custom text message</param>
         public static void LogMessage(Logs logs, string message)
         {
             switch (logs)
@@ -125,9 +124,9 @@ namespace NLogPOC
         /// <summary>
         /// Method for creating six possible NLog levels with custom text message and parameter
         /// </summary>
-        /// <param name="logs"></param>
-        /// <param name="message"></param>
-        /// <param name="param"></param>
+        /// <param name="logs">log level</param>
+        /// <param name="message">custom text message</param>
+        /// <param name="param">extra parameter</param>
         public static void LogMessage(Logs logs, string message, string param)
         {
             switch (logs)
@@ -160,8 +159,8 @@ namespace NLogPOC
         /// <summary>
         /// Method for establishing a TcpClient connection
         /// </summary>
-        /// <param name="server"></param>
-        /// <param name="message"></param>
+        /// <param name="server">server address</param>
+        /// <param name="message">client message</param>
         public static void Connect(String server, String message)
         {
             try
@@ -196,7 +195,7 @@ namespace NLogPOC
 
                 // Read the first batch of the TcpServer response bytes.
                 Int32 bytes = stream.Read(data, 0, data.Length);
-                responseData = System.Text.Encoding.ASCII.GetString(data, 0, bytes);
+                responseData = Encoding.ASCII.GetString(data, 0, bytes);
                 Console.WriteLine("Received: {0}", responseData);
 
                 // Close everything.
@@ -239,9 +238,6 @@ namespace NLogPOC
                 string data = Encoding.UTF8.GetString(bytes);
                 Console.WriteLine("Server sent message: {0}", data);
 
-
-
-
                 networkStream.Close();
                 tcpClient.Close();
 
@@ -276,13 +272,16 @@ namespace NLogPOC
         /// <summary>
         /// Method that disposes TcpClient instance and disconnects the TCP connenction
         /// </summary>
-        /// <param name="client"></param>
+        /// <param name="client">instance of TcpClient</param>
         public static void DisconnectClient(TcpClient client)
         {
             client.GetStream().Close();
             client.Close();
         }
 
+        /// <summary>
+        /// Method for listening for incoming connection attempts on the specified local IP address and port number
+        /// </summary>
         public static void TcpListener()
         {
             TcpListener server = null;
@@ -373,7 +372,7 @@ namespace NLogPOC
                 Console.Title = "Server";
 
                 // Set listener for incoming connection requests
-                IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
+                IPAddress ipAddress = IPAddress.Parse(ConfigurationManager.AppSettings["IpAddress"]);
                 TcpListener tcpListener = new TcpListener(ipAddress, 8080);
                 tcpListener.Start();
                 // Create log messages by using NLog logging platform
@@ -425,7 +424,7 @@ namespace NLogPOC
         /// <summary>
         /// Method for communicating with the client by writing data to the Network Stream on a new thread
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="data">object data</param>
         static void listenClient(object data)
         {
             while (client.Connected)
@@ -444,23 +443,22 @@ namespace NLogPOC
                     // read the client message into a byte buffer
                     buffer = new byte[1024];
                     netstream.Read(buffer, 0, 1024);
+
+                    //  sequence of bytes
+                    Stream stream = new MemoryStream(buffer);
+
                     // convert the client message into a string and display it
                     string readData = Encoding.UTF8.GetString(buffer);
                     Console.WriteLine("Client {0} sent message: {1}", client.RemoteEndPoint, readData);
 
                     // for deserializing XML documents into objects of the specified type
                     XmlSerializer serializer = new XmlSerializer(typeof(StepList));
-                    // create new file, (over)write the specified string to the file and then close the file, 
-                    File.WriteAllText("simple.xml", readData);
 
-                    // deserialization from created xml file
-                    using (FileStream fileStream = new FileStream("simple.xml", FileMode.Open))
-                    {
-                        // deserialize the XML document contained by the specified Stream
-                        StepList result = (StepList)serializer.Deserialize(fileStream);
-                        result.Print();
-                        Console.WriteLine("\n");
-                    }
+                    // deserialize the XML document contained by the specified memory stream
+                    StepList result = (StepList)serializer.Deserialize(stream);
+                    result.Print();
+                    Console.WriteLine("\n");
+
                 }
                 catch (IOException e)
                 {
@@ -490,7 +488,8 @@ namespace NLogPOC
             try
             {
                 // connect the client to the specified port on the specifed host
-                tcpClient.Connect("127.0.0.1", 8080);
+                tcpClient.Connect(ConfigurationManager.AppSettings["IpAddress"],
+                    int.Parse(ConfigurationManager.AppSettings["SocketPort"]));
                 // get socket remote endpoint
                 remoteEndpoint = tcpClient.Client.RemoteEndPoint.ToString();
                 Console.WriteLine("Connected - {0}", remoteEndpoint);
@@ -516,7 +515,7 @@ namespace NLogPOC
                 // send response to server
                 if (data.Length != 0)
                 {
-                    //// encode all the characters in the specifedstring into a sequence of bytes
+                    //// encode all the characters in the specified string into a sequence of bytes
                     //byte[] buffer = Encoding.ASCII.GetBytes("\nI got your message, thank you!");
                     //// write data to Network Stream in order to send return message to server
                     //networkStream.Write(buffer, 0, buffer.Length);
@@ -576,8 +575,8 @@ namespace NLogPOC
             }
             catch (Exception e)
             {
-                Console.WriteLine("Unable to close client", remoteEndpoint);
-                LogMessage(Logs.Error, "Unable to close client.", e.ToString());
+                Console.WriteLine("Unable to handle delay and disconnect", remoteEndpoint);
+                LogMessage(Logs.Error, "Unable to handle delay and disconnect", e.ToString());
             }
 
             // check if client is disconnected
@@ -650,7 +649,7 @@ namespace NLogPOC
 
         #region Collection serialization
 
-        // A test object that needs to be serialized.
+        // A test objects serialized by using SOAP format
         [Serializable()]
         public class TestSimpleObject
         {
@@ -672,6 +671,9 @@ namespace NLogPOC
                 member5 = "hello world!";
             }
 
+            /// <summary>
+            /// Method for printing all elements of TestSimpleObject instance
+            /// </summary>
             public void Print()
             {
                 Console.WriteLine("member1 = '{0}'", member1);
@@ -682,7 +684,10 @@ namespace NLogPOC
             }
         }
 
-
+        /// <summary>
+        /// Method for creating serialized collection by using SOAP format
+        /// </summary>
+        /// <returns></returns>
         static Stream CreateSerializedCollection()
         {
             //Creates a new TestSimpleObject object.
@@ -703,6 +708,10 @@ namespace NLogPOC
             return stream;
         }
 
+        /// <summary>
+        /// Method for deserializing collections in SOAP format
+        /// </summary>
+        /// <param name="stream">serialized object in binary format that we want to deserialize</param>
         static void DeserializeCollection(Stream stream)
         {
             TestSimpleObject obj = new TestSimpleObject();
@@ -725,7 +734,11 @@ namespace NLogPOC
             obj.Print();
         }
 
-
+        /// <summary>
+        /// Method for converting stream to byte array
+        /// </summary>
+        /// <param name="input">input stream that we want to convert</param>
+        /// <returns></returns>
         public static byte[] ReadFully(Stream input)
         {
             byte[] buffer = new byte[16 * 1024];
@@ -741,7 +754,7 @@ namespace NLogPOC
                 }
                 catch (ObjectDisposedException e)
                 {
-
+                    Console.WriteLine("Conversion failed" + e.Message);
                 }
 
                 return ms.ToArray();
@@ -753,15 +766,26 @@ namespace NLogPOC
 
         #region XML deserialization
 
+        /// <summary>
+        /// Sample collection of objects deserialized by 
+        /// </summary>
         public class CollectionTestObject
         {
             public object Key;
             public object Value;
 
+            /// <summary>
+            /// Default constructor for CollectionTestObject
+            /// </summary>
             public CollectionTestObject()
             {
             }
 
+            /// <summary>
+            /// Constructor for CollectionTestObject
+            /// </summary>
+            /// <param name="key">sample key</param>
+            /// <param name="value">sample value</param>
             public CollectionTestObject(object key, object value)
             {
                 Key = key;
@@ -783,11 +807,11 @@ namespace NLogPOC
                 int count = 1;
                 Steps.ForEach(
                     item => Console.Write(
-                        count++ + 
-                        ". Value: " + 
-                        item.Name + 
-                        ", Key: " + 
-                        item.Desc + 
+                        count++ +
+                        ". Value: " +
+                        item.Name +
+                        ", Key: " +
+                        item.Desc +
                         "\n"
                     )
                 );
