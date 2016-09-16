@@ -1,11 +1,11 @@
-using System; // fundamental classes and commonly-used base classes 
-using System.Threading.Tasks; // provides types for asynchronous operations
-using System.Threading; // creates and controls a thread, sets priority and gets its status
-using static NLogPoC.Networking;
+using System;
+using System.Threading.Tasks;
+using System.Threading;
+using System.Configuration;
 
-namespace NLogPOC
+namespace NLog
 {
-    public class Program
+    public sealed class Program : IDisposable
     {
         #region Member variables
 
@@ -18,44 +18,44 @@ namespace NLogPOC
 
         static void Main(string[] args)
         {
+            Networking networking = new Networking();
+            Logging logging = new Logging();
+
             Console.WriteLine("NLog is a free logging platform for .NET\n");
 
             //// example of possible log levels
-            //WriteLogMessages();
-            //WriteParameterizedLogMessagges();
+            //logging.WriteLogMessages();
+            //logging.WriteParameterizedLogMessagges();
 
-            //Connect("127.0.0.1", "message");
+            //Thread t1 = new Thread(networking.StartServer);
+            //t1.Start();
 
-            //TcpListener();
+            //// Testing of lock
+            //lock (obj)
+            //{
+            //    Thread t2 = new Thread(networking.StartClient);
+            //    t2.Start();
+            //}
 
-            //ConnectClient();
-            //Close();
+            //// Testing of delays
+            //Task.Run(async () => {
+            //    Thread t3 = new Thread(networking.StartClient);
+            //    await Task.Delay(8000);
+            //    t3.Start();
+            //});
 
-
-            Thread t1 = new Thread(StartServer);
-            t1.Start();
-
-            // Testing of lock
-            lock (obj)
-            {
-                Thread t2 = new Thread(StartClient);
-                t2.Start();
-            }
-
-            // Testing of delays
-            Task.Run(async () => {
-                Thread t3 = new Thread(StartClient);
-                await Task.Delay(8000);
-                t3.Start();
-            });
-
-            //StartServer();
-            //StartClient();
+            networking.StartServer(ConfigurationManager.AppSettings["IpAddress"], int.Parse(ConfigurationManager.AppSettings["SocketPort"]));
+            networking.StartClient(ConfigurationManager.AppSettings["IpAddress"], int.Parse(ConfigurationManager.AppSettings["SocketPort"]));
 
             Console.WriteLine("Press any key to exit...");
             Console.ReadLine();
         }
 
         #endregion
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
