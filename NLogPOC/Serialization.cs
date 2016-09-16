@@ -4,17 +4,10 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Soap;
 using System.Xml.Serialization;
 
-namespace NLogPoC
+namespace NLog
 {
-    public class Serialization
+    public class Serialization : Networking
     {
-        #region Member variables
-
-        // stores list of serializable test objects
-        private Dictionary<int, TestSimpleObject> m_listConversations = new Dictionary<int, TestSimpleObject>();
-
-        #endregion
-
         #region Collection serialization
 
         // A test objects serialized by using SOAP format
@@ -56,7 +49,7 @@ namespace NLogPoC
         /// Method for creating serialized collection by using SOAP format
         /// </summary>
         /// <returns></returns>
-        static Stream CreateSerializedCollection()
+        public Stream CreateSerializedCollection()
         {
             //Creates a new TestSimpleObject object.
             TestSimpleObject obj = new TestSimpleObject();
@@ -80,7 +73,7 @@ namespace NLogPoC
         /// Method for deserializing collections in SOAP format
         /// </summary>
         /// <param name="stream">serialized object in binary format that we want to deserialize</param>
-        static void DeserializeCollection(Stream stream)
+        public void DeserializeCollection(Stream stream)
         {
             TestSimpleObject obj = new TestSimpleObject();
             //Empties obj.
@@ -101,34 +94,6 @@ namespace NLogPoC
             Console.WriteLine("After deserialization the object contains: ");
             obj.Print();
         }
-
-        /// <summary>
-        /// Method for converting stream to byte array
-        /// </summary>
-        /// <param name="input">input stream that we want to convert</param>
-        /// <returns></returns>
-        public static byte[] ReadFully(Stream input)
-        {
-            byte[] buffer = new byte[16 * 1024];
-            using (MemoryStream ms = new MemoryStream())
-            {
-                int read;
-                try
-                {
-                    while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
-                    {
-                        ms.Write(buffer, 0, read);
-                    }
-                }
-                catch (ObjectDisposedException e)
-                {
-                    Console.WriteLine("Conversion failed" + e.Message);
-                }
-
-                return ms.ToArray();
-            }
-        }
-
 
         #endregion
 
