@@ -1,6 +1,6 @@
 ﻿using NLog;
 
-namespace NLogPoC
+namespace NLog
 {
     public class Logging
     {
@@ -34,7 +34,7 @@ namespace NLogPoC
         /// Method for writing sample diagnostic messages at six different log levels
         /// Those are Trace, Debug, Info, Warn, Error and Fatal level
         /// </summary>
-        public static void WriteLogMessages()
+        public void WriteLogMessages()
         {
             logger.Trace("Sample trace message");
             logger.Debug("Sample debug message");
@@ -50,7 +50,7 @@ namespace NLogPoC
         /// <summary>
         /// Method for writing parameterizedLogMessages at six different log levels
         /// </summary>
-        public static void WriteParameterizedLogMessagges()
+        public void WriteParameterizedLogMessagges()
         {
             // example of custom variables that are used for formating the string message
             int a = 23;
@@ -71,7 +71,7 @@ namespace NLogPoC
         /// </summary>
         /// <param name="logs">log level</param>
         /// <param name="message">custom text message</param>
-        public static void LogMessage(Logs logs, string message)
+        public void LogMessage(Logs logs, string message)
         {
             switch (logs)
             {
@@ -102,7 +102,7 @@ namespace NLogPoC
         /// <param name="logs">log level</param>
         /// <param name="message">custom text message</param>
         /// <param name="param">extra parameter</param>
-        public static void LogMessage(Logs logs, string message, string param)
+        public void LogMessage(Logs logs, string message, string param)
         {
             switch (logs)
             {
